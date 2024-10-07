@@ -1,0 +1,3 @@
+#Asistente IA Veterinario 
+##Presentación del Problema a Abordar
+###La salud de las mascotas, especialmente perros y gatos, es una preocupación creciente entre las personas. La gran mayoría enfrentan dificultades para identificar síntomas o patologías, lo que puede llevar a un retraso en la atención médica adecuada. Esta problemática es relevante porque un diagnóstico temprano puede ser crucial para el bienestar del animal y la prevención de enfermedades graves. A menudo, los familiares de las mascotas carecen de conocimientos mínimos o el tiempo necesario para dedicarle a su mascota, lo que crea la necesidad de una herramienta accesible que pueda ofrecer orientación y apoyo inmediato.
