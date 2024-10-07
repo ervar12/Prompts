@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente IA Veterinario</title>
+    <!-- Agregar Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Color de fondo suave */
+            font-family: Arial, sans-serif; /* Fuente general */
+        }
+        .container {
+            max-width: 500px; /* Ancho máximo para dispositivos móviles */
+            margin: auto; /* Centrar el contenedor */
+            padding: 20px; /* Espaciado interno */
+            border-radius: 10px; /* Bordes redondeados */
+            background: white; /* Fondo blanco para el contenedor */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+        h1 {
+            font-size: 24px; /* Tamaño de fuente más grande */
+        }
+        .btn {
+            border-radius: 20px; /* Bordes redondeados para el botón */
+        }
+        #output {
+            margin-top: 20px;
+            max-height: 300px; /* Altura máxima para la sección de respuestas */
+            overflow-y: auto; /* Scroll si el contenido excede la altura */
+        }
+        .alert {
+            border-radius: 10px; /* Bordes redondeados para las alertas */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Asistente IA Veterinario</h1>
+        <p class="text-center">Tienes tres preguntas gratuitas. ¿Cómo puedo ayudarte hoy?</p>
+        
+        <div class="form-group">
+            <textarea id="userInput" class="form-control" rows="4" placeholder="Describe el problema..."></textarea>
+        </div>
+        <button id="askButton" class="btn btn-primary btn-block">Hacer Pregunta</button>
+        
+        <div id="output" class="mt-4"></div>
+    </div>
+
+    <!-- Agregar Bootstrap JS y dependencias -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        let contadorPreguntas = 0;
+        const maxPreguntas = 3;
+        const apiKey = '';  // Coloca tu API Key de OpenAI aquí
+
+        async function obtenerRespuesta(prompt) {
+            const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: "gpt-4",
+                    messages: [
+                        { role: "system", content: "Eres medico veterinario especialista en pequeños animales..." },
+                        { role: "user", content: prompt }
+                    ],
+                    max_tokens: 150
+                })
+            });
+
+            const data = await response.json();
+            return data.choices[0].message.content;
+        }
+
+        document.getElementById('askButton').addEventListener('click', async () => {
+            if (contadorPreguntas < maxPreguntas) {
+                const userInput = document.getElementById('userInput').value;
+                const prompt = `El usuario describe que: ${userInput}. Como asistente veterinario, ¿qué recomendaciones puedes dar?`;
+                
+                try {
+                    const respuesta = await obtenerRespuesta(prompt);
+                    document.getElementById('output').innerHTML += `<div class="alert alert-secondary"><strong>Pregunta:</strong> ${userInput}</div>`;
+                    document.getElementById('output').innerHTML += `<div class="alert alert-success"><strong>Asistente:</strong> ${respuesta}</div>`;
+                    contadorPreguntas++;
+                    document.getElementById('userInput').value = ''; // Limpiar el campo de entrada
+                    document.getElementById('output').scrollTop = document.getElementById('output').scrollHeight; // Desplazar hacia abajo
+                } catch (error) {
+                    console.error('Error al obtener la respuesta:', error);
+                    document.getElementById('output').innerHTML += "<div class='alert alert-danger'>Lo siento, hubo un problema al procesar tu solicitud.</div>";
+                }
+            } else {
+                document.getElementById('output').innerHTML += "<div class='alert alert-warning'>Se ha alcanzado el límite de preguntas gratuitas.</div>";
+            }
+        });
+    </script>
+</body>
+</html>
+<!--tengo un perro raza golden que presenta "parches calientes" en el lomo, podrias decirme que hacer? necesito tambien que me pases medicacion y dosis para resolver esta situacion. No voy a utilizarlo hasta hablar con un veterinario, pero seria de gran utilidad es-->
